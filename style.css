@@ -1,0 +1,41 @@
+:root {
+  --background-color: #ddd;
+  --font-default: "Roboto", sans-serif;
+  --delete-icon-color: #eee;
+  --edit-icon-color: #222;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--background-color);
+  font-family: var(--font-default);
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.contacts-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.delete-icon {
+  color: var(--delete-icon-color);
+}
+
+.edit-icon {
+  color: var(--edit-icon-color);
+}
