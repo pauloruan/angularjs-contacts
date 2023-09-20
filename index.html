@@ -78,6 +78,7 @@
       tabindex="-1"
       role="dialog"
       aria-labelledby="myModalLabel"
+      ng-controller="CreateContact"
     >
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -100,6 +101,7 @@
                   class="form-control"
                   id="nome"
                   placeholder="Digite o nome"
+                  ng-model="nome"
                 />
               </div>
               <div class="form-group">
@@ -109,6 +111,7 @@
                   class="form-control"
                   id="idade"
                   placeholder="Digite a idade"
+                  ng-model="idade"
                 />
               </div>
               <div class="form-group">
@@ -118,6 +121,7 @@
                   class="form-control"
                   id="dataNascimento"
                   max="{{ currentDate }}"
+                  ng-model="dataNascimento"
                 />
               </div>
               <div class="form-group">
@@ -127,6 +131,27 @@
                   class="form-control"
                   id="email"
                   placeholder="Digite o email"
+                  ng-model="email"
+                />
+              </div>
+              <div class="form-group">
+                <label for="telefone">Telefone:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="telefone"
+                  placeholder="Digite o telefone"
+                  ng-model="telefone"
+                />
+              </div>
+              <div class="form-group">
+                <label for="celular">Celular:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="celular"
+                  placeholder="Digite o celular"
+                  ng-model="celular"
                 />
               </div>
 
@@ -141,6 +166,7 @@
                   class="form-control"
                   id="logradouro"
                   placeholder="Digite o logradouro"
+                  ng-model="logradouro"
                 />
               </div>
               <div class="form-group">
@@ -150,6 +176,7 @@
                   class="form-control"
                   id="cidade"
                   placeholder="Digite a cidade"
+                  ng-model="cidade"
                 />
               </div>
               <div class="form-group">
@@ -159,6 +186,7 @@
                   class="form-control"
                   id="bairro"
                   placeholder="Digite o bairro"
+                  ng-model="bairro"
                 />
               </div>
               <div class="form-group">
@@ -168,6 +196,7 @@
                   class="form-control"
                   id="numero"
                   placeholder="Digite o número"
+                  ng-model="numero"
                 />
               </div>
               <div class="form-group">
@@ -177,6 +206,7 @@
                   class="form-control"
                   id="uf"
                   placeholder="Digite a UF"
+                  ng-model="uf"
                 />
               </div>
             </form>
@@ -186,7 +216,12 @@
             <button type="button" class="btn btn-default" data-dismiss="modal">
               Voltar
             </button>
-            <button type="button" class="btn btn-primary" id="salvarPessoa">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="salvarPessoa"
+              ng-click="savePerson()"
+            >
               Salvar
             </button>
           </div>
