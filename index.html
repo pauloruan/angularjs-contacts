@@ -53,7 +53,7 @@
             <tr ng-repeat="contact in contacts">
               <td>{{ contact.nome }}</td>
               <td>{{ contact.idade }}</td>
-              <td>{{ contact.dataNascimento }}</td>
+              <td>{{ contact.dataNascimento | date: 'dd/MM/yyyy' }}</td>
               <td>{{ contact.email }}</td>
               <td>{{ contact.telefone }}</td>
               <td>{{ contact.celular }}</td>
@@ -206,6 +206,7 @@
                   class="form-control"
                   id="uf"
                   placeholder="Digite a UF"
+                  maxlength="2"
                   ng-model="uf"
                 />
               </div>
