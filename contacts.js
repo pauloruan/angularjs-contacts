@@ -4,6 +4,37 @@ angular
     $scope.currentDate = new Date().toISOString().split("T")[0]
 
     $scope.contacts = []
+    $scope.editingContact = {}
+    $scope.isEditing = false
+
+    function resetFields() {
+      $scope.nome = ""
+      $scope.idade = ""
+      $scope.dataNascimento = ""
+      $scope.email = ""
+      $scope.telefone = ""
+      $scope.celular = ""
+      $scope.logradouro = ""
+      $scope.cidade = ""
+      $scope.bairro = ""
+      $scope.numero = ""
+      $scope.uf = ""
+      $scope.isEditing = false
+      $scope.editingContact = {}
+    }
+
+    function formatDate(date) {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, "0")
+      const day = String(date.getDate()).padStart(2, "0")
+      const hours = String(date.getHours()).padStart(2, "0")
+      const minutes = String(date.getMinutes()).padStart(2, "0")
+      const seconds = String(date.getSeconds()).padStart(2, "0")
+      const milliseconds = String(date.getMilliseconds()).padStart(3, "0")
+
+      return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`
+    }
+
     ContactService.getAllContacts()
       .then(function (contacts) {
         $scope.contacts = contacts
@@ -13,71 +44,77 @@ angular
       })
 
     $scope.savePerson = function () {
-      const date = new Date($scope.dataNascimento)
-      function formatDate(date) {
-        const year = date.getFullYear()
-        const month = String(date.getMonth() + 1).padStart(2, "0")
-        const day = String(date.getDate()).padStart(2, "0")
-        const hours = String(date.getHours()).padStart(2, "0")
-        const minutes = String(date.getMinutes()).padStart(2, "0")
-        const seconds = String(date.getSeconds()).padStart(2, "0")
-        const milliseconds = String(date.getMilliseconds()).padStart(3, "0")
+      if ($scope.isEditing) {
+        const personDataEdited = {
+          nome: $scope.editingContact.nome,
+          idade: $scope.editingContact.idade,
+          dataNascimento: $scope.editingContact.dataNascimento,
+          email: $scope.editingContact.email,
+          telefone: $scope.editingContact.telefone,
+          celular: $scope.editingContact.celular
+        }
 
-        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`
+        ContactService.updateContact($scope.editingContact.pessoaId, personDataEdited)
+          .then(function () {
+            const index = $scope.contacts.findIndex(
+              (contact) => contact.pessoaId === $scope.editingContact.pessoaId
+            )
+            if (index !== -1) {
+              $scope.contacts[index] = angular.copy($scope.editingContact)
+            }
+
+            console.log("Contato editado com sucesso!")
+            resetFields()
+          })
+          .catch(function (error) {
+            console.error("Erro ao editar o contato:", error)
+          })
+      } else {
+        const date = new Date($scope.dataNascimento)
+        const formattedDate = formatDate(date)
+
+        const personData = {
+          nome: $scope.nome,
+          idade: $scope.idade,
+          dataNascimento: formattedDate,
+          email: $scope.email,
+          telefone: $scope.telefone,
+          celular: $scope.celular
+        }
+
+        console.log(personData)
+        ContactService.savePerson(personData)
+          .then(function (personId) {
+            const addressData = {
+              logradouro: $scope.logradouro,
+              cidade: $scope.cidade,
+              bairro: $scope.bairro,
+              numero: $scope.numero,
+              uf: $scope.uf,
+              pessoaId: personId
+            }
+
+            console.log(addressData)
+
+            return ContactService.saveAddress(addressData)
+          })
+          .then(function () {
+            console.log("Pessoa e endereço salvos com sucesso!")
+            resetFields()
+            $("#myModal").modal("hide")
+          })
+          .catch(function (error) {
+            console.error("Erro ao salvar pessoa ou endereço:", error)
+          })
       }
-
-      const formattedDate = formatDate(date)
-
-      const personData = {
-        nome: $scope.nome,
-        idade: $scope.idade,
-        dataNascimento: formattedDate,
-        email: $scope.email,
-        telefone: $scope.telefone,
-        celular: $scope.celular
-      }
-
-      console.log(personData)
-
-      ContactService.savePerson(personData)
-        .then(function (personId) {
-          const addressData = {
-            logradouro: $scope.logradouro,
-            cidade: $scope.cidade,
-            bairro: $scope.bairro,
-            numero: $scope.numero,
-            uf: $scope.uf,
-            pessoaId: personId
-          }
-
-          console.log(addressData)
-
-          return ContactService.saveAddress(addressData)
-        })
-        .then(function () {
-          console.log("Pessoa e endereço salvos com sucesso!")
-          $scope.nome = ""
-          $scope.idade = ""
-          $scope.dataNascimento = ""
-          $scope.email = ""
-          $scope.telefone = ""
-          $scope.celular = ""
-          $scope.logradouro = ""
-          $scope.cidade = ""
-          $scope.bairro = ""
-          $scope.numero = ""
-          $scope.uf = ""
-        })
-        .catch(function (error) {
-          console.error("Erro ao salvar pessoa ou endereço:", error)
-        })
     }
 
     $scope.deleteContact = function (contactId) {
       ContactService.deleteContact(contactId)
         .then(function () {
-          const index = $scope.contacts.indexOf((contact) => contact.id === contactId)
-          console.log(index)
+          const index = $scope.contacts.indexOf(
+            (contact) => contact.pessoaId === contactId
+          )
           if (index !== -1) {
             $scope.contacts.splice(index, 1)
           }
@@ -86,6 +123,27 @@ angular
         .catch(function (error) {
           console.error("Erro ao excluir o contato:", error)
         })
+    }
+
+    $scope.editContact = function (contact) {
+      $scope.isEditing = true
+
+      let formattedContact = {
+        pessoaId: contact.personId,
+        nome: contact.nome,
+        idade: contact.idade,
+        dataNascimento: contact.dataNascimento,
+        email: contact.email,
+        telefone: contact.telefone,
+        celular: contact.celular,
+        logradouro: contact.logradouro,
+        cidade: contact.cidade,
+        bairro: contact.bairro,
+        numero: contact.numero,
+        uf: contact.uf
+      }
+
+      angular.copy(formattedContact, $scope.editingContact)
     }
   })
 
@@ -147,6 +205,15 @@ angular
         params: {
           pessoaId: contactId
         }
+      })
+    }
+
+    this.updateContact = function (contactId, personData) {
+      return $http({
+        method: "PUT",
+        url: `${this.BASE_URL}/Pessoas/${contactId}`,
+        headers: this.HEADERS,
+        data: personData
       })
     }
   })

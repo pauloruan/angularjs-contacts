@@ -58,7 +58,14 @@
               <td>{{ contact.telefone }}</td>
               <td>{{ contact.celular }}</td>
               <td>
-                <button type="button" title="contact-edit-btn" class="btn btn-warning">
+                <button
+                  type="button"
+                  title="contact-edit-btn"
+                  class="btn btn-warning"
+                  data-toggle="modal"
+                  data-target="#myModal"
+                  ng-click="editContact(contact)"
+                >
                   <i class="fa-solid fa-pen-to-square edit-icon"></i>
                 </button>
                 <button
@@ -91,7 +98,9 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Nova Pessoa</h4>
+            <h4 class="modal-title" id="myModalLabel">
+              {{ isEditing ? 'Editar' : 'Criar' }} Pessoa
+            </h4>
           </div>
           <div class="modal-body">
             <form>
@@ -234,6 +243,8 @@
         </div>
       </div>
     </div>
+
+    <!-- MODAL EDIT FORM -->
 
     <!-- FOOTER -->
     <footer class="container text-center">
