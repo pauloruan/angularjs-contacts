@@ -24,7 +24,7 @@
   </head>
   <body>
     <!-- CONTAINER -->
-    <div class="container" ng-controller="GetAllContacts">
+    <div class="container" ng-controller="ContactsController">
       <div class="contacts-header">
         <h2>Listagem</h2>
         <button
@@ -61,7 +61,12 @@
                 <button type="button" title="contact-edit-btn" class="btn btn-warning">
                   <i class="fa-solid fa-pen-to-square edit-icon"></i>
                 </button>
-                <button type="button" title="contact-delete-btn" class="btn btn-danger">
+                <button
+                  type="button"
+                  title="contact-delete-btn"
+                  class="btn btn-danger"
+                  ng-click="deleteContact(contact.pessoaId)"
+                >
                   <i class="fa fa-trash delete-icon" aria-hidden="true"></i>
                 </button>
               </td>
@@ -78,7 +83,7 @@
       tabindex="-1"
       role="dialog"
       aria-labelledby="myModalLabel"
-      ng-controller="CreateContact"
+      ng-controller="ContactsController"
     >
       <div class="modal-dialog" role="document">
         <div class="modal-content">

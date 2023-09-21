@@ -1,10 +1,9 @@
 angular
   .module("contacts-app", [])
-  .controller("ContactsController", function ($scope) {
+  .controller("ContactsController", function ($scope, ContactService) {
     $scope.currentDate = new Date().toISOString().split("T")[0]
-  })
 
-  .controller("GetAllContacts", function ($scope, ContactService) {
+    $scope.contacts = []
     ContactService.getAllContacts()
       .then(function (contacts) {
         $scope.contacts = contacts
@@ -12,9 +11,7 @@ angular
       .catch(function (error) {
         console.error("Erro ao obter contatos:", error)
       })
-  })
 
-  .controller("CreateContact", function ($scope, ContactService) {
     $scope.savePerson = function () {
       const date = new Date($scope.dataNascimento)
       function formatDate(date) {
@@ -75,7 +72,23 @@ angular
           console.error("Erro ao salvar pessoa ou endereço:", error)
         })
     }
+
+    $scope.deleteContact = function (contactId) {
+      ContactService.deleteContact(contactId)
+        .then(function () {
+          const index = $scope.contacts.indexOf((contact) => contact.id === contactId)
+          console.log(index)
+          if (index !== -1) {
+            $scope.contacts.splice(index, 1)
+          }
+          console.log("Contato excluído com sucesso!")
+        })
+        .catch(function (error) {
+          console.error("Erro ao excluir o contato:", error)
+        })
+    }
   })
+
   .service("ContactService", function ($http) {
     this.BASE_URL = "https://www.selida.com.br/avaliacaotecnica/api"
     this.HEADERS = {
@@ -123,6 +136,17 @@ angular
         url: `${this.BASE_URL}/Endereco`,
         headers: this.HEADERS,
         data: addressData
+      })
+    }
+
+    this.deleteContact = function (contactId) {
+      return $http({
+        method: "DELETE",
+        url: `${this.BASE_URL}/Pessoas/${contactId}`,
+        headers: this.HEADERS,
+        params: {
+          pessoaId: contactId
+        }
       })
     }
   })
